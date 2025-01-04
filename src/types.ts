@@ -14,6 +14,11 @@ export interface SpecValue {
 	// going on in the grafana level when I do this - specifically, I get partially
 	// stale properties deep in the spec even if I deeply Object.freeze()...
 	// so let's pass around a giant string instead to protect it from this nonsense.
-	parsedSpec: string | null;
+	parsedSpec: {
+		text: string;
+		mode: SPEC_MODE;
+	} | null;
 	text: string;
 }
+
+export type SPEC_MODE = "vega" | "vega-lite";

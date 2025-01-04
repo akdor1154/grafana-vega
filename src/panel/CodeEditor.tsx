@@ -5,7 +5,13 @@ import type { JSONSchemaType, ValidateFunction } from "ajv";
 import type { FC } from "react";
 // biome-ignore lint/style/useImportType: <explanation>
 import React, { useCallback, useEffect, useState } from "react";
-import type { Options, SpecValue } from "types";
+import type { Options, SPEC_MODE, SpecValue } from "types";
+import vegaLiteSchema from "vega-lite/build/vega-lite-schema.json";
+import vegaLiteSchemaAjv from "vega-lite/build/vega-lite-schema.json" with {
+	type: "ajv",
+};
+import vegaSchema from "vega/build/vega-schema.json";
+import vegaSchemaAjv from "vega/build/vega-schema.json" with { type: "ajv" };
 
 interface CodeEditorProps {
 	settings?: CodeEditorOptionSettings;
@@ -14,15 +20,13 @@ interface CodeEditorProps {
 	onChange: (value: string) => void;
 }
 
-import vegaLiteSchema from "vega-lite/build/vega-lite-schema.json";
-import vegaLiteSchemaAjv from "vega-lite/build/vega-lite-schema.json" with {
-	type: "ajv",
-};
-import vegaSchema from "vega/build/vega-schema.json";
+const VEGA_LITE_SCHEMA_ID = "https://vega.github.io/schema/vega-lite/v5.json";
+const VEGA_SCHEMA_ID = "https://vega.github.io/schema/vega/v5.json";
 
 vegaLiteSchema.definitions.Data;
 const ajvParsers = {
 	vegaLite: vegaLiteSchemaAjv as unknown as ValidateFunction<unknown>,
+	vega: vegaSchemaAjv as unknown as ValidateFunction<unknown>,
 } satisfies Record<string, ValidateFunction>;
 
 export const CodeEditor: FC<CodeEditorProps> = ({
@@ -109,25 +113,44 @@ export interface CodeEditorOptionSettings {
 interface CodeEditorOptionProps
 	extends StandardEditorProps<SpecValue, CodeEditorOptionSettings, Options> {}
 
-function tryParseInput(value: string): [object | null, string[]] {
-	// biome-ignore lint/complexity/noBannedTypes: <explanation>
-	let obj: {};
+function tryParseInput(
+	value: string,
+): [{ obj: object; mode: SPEC_MODE } | null, string[]] {
+	let obj: { [k: string]: unknown };
 	try {
 		obj = JSON.parse(value);
 	} catch (e) {
 		return [null, [(e as Error).message]];
 	}
-	if (obj !== null) {
-		const res = ajvParsers.vegaLite(obj);
-		if (!res) {
-			const errors =
-				ajvParsers.vegaLite.errors
-					?.map((e) => e.message)
-					.filter((e): e is string => !!e) ?? [];
-			return [null, errors];
-		}
+
+	let validator: ValidateFunction<unknown>;
+	let mode: SPEC_MODE;
+
+	const schema = obj.$schema;
+	if (schema === VEGA_LITE_SCHEMA_ID) {
+		validator = ajvParsers.vegaLite;
+		mode = "vega-lite";
+	} else if (schema === VEGA_SCHEMA_ID) {
+		validator = ajvParsers.vega;
+		mode = "vega";
+	} else {
+		return [
+			null,
+			[
+				`You need to set $schema=${VEGA_LITE_SCHEMA_ID} or $schema=${VEGA_SCHEMA_ID} in your spec.`,
+			],
+		];
 	}
-	return [obj, []];
+
+	const res = validator(obj);
+	if (!res) {
+		const errors =
+			validator.errors?.map((e) => e.message).filter((e): e is string => !!e) ??
+			[];
+		return [null, errors];
+	}
+
+	return [{ obj, mode }, []];
 }
 
 export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
@@ -138,10 +161,12 @@ export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
 }) => {
 	const [errors, setErrors] = useState<string[]>([]);
 	function _onNewText(value: string) {
-		const [obj, errors] = tryParseInput(value);
+		const [res, errors] = tryParseInput(value);
 		setErrors(errors);
 		// as before - grafana does funny business if we send back raw obj here.
-		const parsedSpec = obj ? JSON.stringify(obj) : null;
+		const parsedSpec = res
+			? { text: JSON.stringify(res.obj), mode: res.mode }
+			: null;
 		onChange({ text: value, parsedSpec: parsedSpec });
 	}
 	const onNewText = useCallback(_onNewText, []);

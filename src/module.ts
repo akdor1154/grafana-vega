@@ -11,7 +11,7 @@ export const plugin = new PanelPlugin<Options>(SimplePanel).setPanelOptions(
 			name: "Vega Spec",
 			editor: CodeEditorOption,
 			defaultValue: {
-				parsedSpec: JSON.stringify(defaultBar),
+				parsedSpec: { text: JSON.stringify(defaultBar), mode: "vega-lite" },
 				text: JSON.stringify(defaultBar, null, "\t"),
 			} satisfies Options["vegaSpec"],
 			settings: {},

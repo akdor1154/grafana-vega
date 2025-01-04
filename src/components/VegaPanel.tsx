@@ -145,11 +145,15 @@ export const SimplePanel: React.FC<Props> = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: using json.stringify
 	const SpecChart = useMemo(() => {
-		let parsedSpec: vegaLite.TopLevelSpec | null;
-		try {
-			parsedSpec = JSON.parse(options.vegaSpec.parsedSpec || "");
-		} catch {
-			parsedSpec = null;
+		let parsedSpec:
+			| { mode: "vega-lite"; spec: vegaLite.TopLevelSpec }
+			| { mode: "vega"; spec: vega.Spec }
+			| null = null;
+		if (options.vegaSpec.parsedSpec !== null) {
+			try {
+				const spec = JSON.parse(options.vegaSpec.parsedSpec.text);
+				parsedSpec = { mode: options.vegaSpec.parsedSpec.mode, spec: spec };
+			} catch {}
 		}
 
 		const config: vega.Config & vegaLite.Config = theme.isDark
@@ -161,7 +165,12 @@ export const SimplePanel: React.FC<Props> = ({
 		};
 
 		return MakeVegaChart(parsedSpec, config, tooltipConfig, datasetNames);
-	}, [options.vegaSpec.parsedSpec, theme, JSON.stringify(datasetNames)]);
+	}, [
+		options.vegaSpec.parsedSpec?.text,
+		options.vegaSpec.parsedSpec?.mode,
+		theme,
+		JSON.stringify(datasetNames),
+	]);
 
 	return (
 		<div
@@ -184,7 +193,10 @@ type VegaChartProps = {
 };
 
 function MakeVegaChart(
-	spec: vegaLite.TopLevelSpec | null,
+	spec:
+		| { mode: "vega-lite"; spec: vegaLite.TopLevelSpec }
+		| { mode: "vega"; spec: vega.Spec }
+		| null,
 	config: vega.Config & vegaLite.Config,
 	tooltipConfig: vegaTooltip.Options,
 	datasetNames: string[],
@@ -192,11 +204,29 @@ function MakeVegaChart(
 	let vgSpec: vega.Spec;
 	let runtime: vega.Runtime;
 	if (spec) {
-		spec.datasets = Object.fromEntries(datasetNames.map((s) => [s, {}]));
 	}
 	try {
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		vgSpec = vegaLite.compile(spec!, { config }).spec;
+		if (!spec) {
+			throw new Error("missing spec");
+		}
+		if (spec.mode === "vega-lite") {
+			spec.spec.datasets = Object.fromEntries(datasetNames.map((s) => [s, {}]));
+			vgSpec = vegaLite.compile(spec.spec, { config }).spec;
+		} else if (spec.mode === "vega") {
+			const existing = spec.spec.data ?? [];
+			const existingByName = Object.fromEntries(
+				existing.map((e) => [e.name, e]),
+			);
+			const withGrafana = {
+				...Object.fromEntries(datasetNames.map((s) => [s, { name: s }])),
+				...existingByName,
+			};
+			spec.spec.data = Object.values(withGrafana);
+			vgSpec = spec.spec;
+		} else {
+			const _: never = spec;
+			throw new Error("unreachable");
+		}
 		runtime = vega.parse(vgSpec, config);
 	} catch (e) {
 		console.error(e);
