@@ -1,5 +1,8 @@
 # Changelog
 
-## 1.0.0 (Unreleased)
+## 1.0.6
+ - Wire up Vega support (previously just Vega-Lite worked)
 
-Initial release.
+## 1.0.4
+
+ - Initial release.
