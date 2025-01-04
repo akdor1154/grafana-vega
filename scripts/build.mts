@@ -2,9 +2,10 @@ import Ajv from "ajv";
 import standaloneCode from "ajv/dist/standalone";
 import esbuild from "esbuild";
 import copy from "esbuild-plugin-copy";
+import { execFileSync } from "node:child_process";
 
-import { readFileSync } from "node:fs";
 import addFormats from "ajv-formats";
+import { readFileSync, writeFileSync } from "node:fs";
 import { SOURCE_DIR } from "../.config/webpack/constants.mts";
 
 const DIST_DIR = "dist";
@@ -12,6 +13,8 @@ const DIST_DIR = "dist";
 const pluginJson = JSON.parse(
 	readFileSync("src/plugin.json", { encoding: "utf-8" }),
 );
+
+import packageJson from "../package.json" with { type: "json" };
 
 const dist = `${DIST_DIR}/`;
 
@@ -44,6 +47,30 @@ const ajvCompilerPlugin: esbuild.Plugin = {
 	},
 };
 
+type CopyReplacePluginArgs = {
+	from: string;
+	to: string;
+	patterns: [RegExp, string][];
+};
+function copyReplacePlugin(args: CopyReplacePluginArgs): esbuild.Plugin {
+	return {
+		name: "replaceInPluginJson",
+		setup(build) {
+			build.onStart(() => {
+				console.log("yo");
+				let source = readFileSync(args.from, "utf-8");
+				for (const [pat, repl] of args.patterns) {
+					source = source.replaceAll(pat, repl);
+				}
+				writeFileSync(args.to, source);
+			});
+		},
+	};
+}
+
+const now = new Date();
+const commit = execFileSync("git", ["rev-parse", "HEAD"], {"encoding": "utf-8"}).trim()
+console.dir({commit})
 await esbuild.build({
 	sourceRoot: SOURCE_DIR,
 	entryPoints: ["module.js"],
@@ -87,8 +114,18 @@ await esbuild.build({
 				{ from: "README.md", to: "README.md" },
 				{ from: "CHANGELOG.md", to: "CHANGELOG.md" },
 				{ from: "LICENSE", to: "LICENSE" },
-				{ from: `${SOURCE_DIR}/plugin.json`, to: "plugin.json" },
 				{ from: `${SOURCE_DIR}/img/**/*`, to: "img" },
+			],
+		}),
+		copyReplacePlugin({
+			from: `${SOURCE_DIR}/plugin.json`,
+			to: `${DIST_DIR}/plugin.json`,
+			patterns: [
+				[/%VERSION%/g, packageJson.version],
+				[/%TODAY%/g, now.toISOString().substring(0, 10)],
+				[/%PLUGIN_ID%/g, pluginJson.id],
+				[/%COMMIT%/g, commit],
+				[/"%TIMESTAMP%"/g, (now.getTime()/1000).toFixed(0)]
 			],
 		}),
 	],

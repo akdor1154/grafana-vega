@@ -18,6 +18,10 @@
 			{ "path": "img/docs/screenshot.webp" },
 			{ "path": "img/docs/fields.webp" }
 		],
+		"build": {
+			"hash": "%COMMIT%",
+			"time": "%TIMESTAMP%"
+		},
 		"version": "%VERSION%",
 		"updated": "%TODAY%"
 	},
