@@ -1,6 +1,6 @@
 {
 	"name": "grafana-vega",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"scripts": {
 		"build": "tsx scripts/build.mts",
 		"dev": "tsx scripts/build.mts",
