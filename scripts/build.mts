@@ -3,9 +3,9 @@ import standaloneCode from "ajv/dist/standalone";
 import esbuild from "esbuild";
 import copy from "esbuild-plugin-copy";
 
-import { readFileSync } from "node:fs";
 import addFormats from "ajv-formats";
-import { SOURCE_DIR } from "../.config/webpack/constants";
+import { readFileSync } from "node:fs";
+import { SOURCE_DIR } from "../.config/webpack/constants.ts";
 
 const DIST_DIR = "dist";
 
@@ -22,7 +22,6 @@ const ajv = new Ajv({
 	formats: { "color-hex": true },
 });
 addFormats(ajv);
-
 function buildValidator(path: string) {
 	const s = readFileSync(path, { encoding: "utf-8" });
 	const obj = JSON.parse(s);
