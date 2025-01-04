@@ -3,9 +3,10 @@
 	"type": "panel",
 	"name": "Vega",
 	"id": "gridcogdev-vega-panel",
+	"buildMode": "%BUILD_MODE%",
 	"info": {
 		"keywords": ["panel"],
-		"description": "",
+		"description": "Create panels from Vega[-Lite] specs.",
 		"author": {
 			"name": "Jarrad Whitaker <akdor1154>"
 		},
@@ -15,8 +16,8 @@
 		},
 		"links": [],
 		"screenshots": [
-			{ "path": "img/docs/screenshot.webp" },
-			{ "path": "img/docs/fields.webp" }
+			{ "path": "img/docs/screenshot.png" },
+			{ "path": "img/docs/fields.png" }
 		],
 		"build": {
 			"hash": "%COMMIT%",

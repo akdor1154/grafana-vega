@@ -71,9 +71,7 @@ const now = new Date();
 const commit = execFileSync("git", ["rev-parse", "HEAD"], {
 	encoding: "utf-8",
 }).trim();
-console.dir({ commit });
 await esbuild.build({
-	sourceRoot: SOURCE_DIR,
 	entryPoints: ["module.js"],
 	outdir: DIST_DIR,
 	publicPath: `public/plugins/${pluginJson.id}`,
@@ -108,11 +106,14 @@ await esbuild.build({
 	},
 	bundle: true,
 	format: "cjs",
+	minify: true,
+	sourcemap: "linked",
+	sourceRoot:
+		"https://raw.githubusercontent.com/akdor1154/grafana-vega/refs/heads/main/",
 	plugins: [
 		ajvCompilerPlugin,
 		copy({
 			assets: [
-				{ from: "README.md", to: "README.md" },
 				{ from: "CHANGELOG.md", to: "CHANGELOG.md" },
 				{ from: "LICENSE", to: "LICENSE" },
 				{ from: `${SOURCE_DIR}/img/**/*`, to: "img" },
@@ -127,6 +128,17 @@ await esbuild.build({
 				[/%PLUGIN_ID%/g, pluginJson.id],
 				[/%COMMIT%/g, commit],
 				[/"%TIMESTAMP%"/g, (now.getTime() / 1000).toFixed(0)],
+				[/%BUILD_MODE%/g, "production"],
+			],
+		}),
+		copyReplacePlugin({
+			from: "README.md",
+			to: `${DIST_DIR}/README.md`,
+			patterns: [
+				[
+					/src\/img\//g,
+					"https://raw.githubusercontent.com/akdor1154/grafana-vega/refs/heads/main/src/img/",
+				],
 			],
 		}),
 	],
