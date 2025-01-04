@@ -11,6 +11,20 @@ test('should display "No data" in case panel data is empty', async ({
 	await expect(panelEditPage.panel.locator).toContainText("No data");
 });
 
+test("should display data for provisioned dashboard", async ({
+	gotoPanelEditPage,
+	readProvisionedDashboard,
+	readProvisionedDataSource,
+}) => {
+	const ds = await readProvisionedDataSource({ fileName: "datasources.yml" });
+	const dashboard = await readProvisionedDashboard({
+		fileName: "dashboard.json",
+	});
+	const panelEditPage = await gotoPanelEditPage({ dashboard, id: "1" });
+
+	await expect(panelEditPage.panel.locator).toHaveScreenshot("provisioned.png");
+});
+
 test("should display a graph when a spec is set", async ({
 	panelEditPage,
 	readProvisionedDataSource,
