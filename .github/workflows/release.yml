@@ -11,8 +11,7 @@ permissions: read-all
 
 jobs:
   release:
-    environment:
-      name: Grafana Release
+    environment: Grafana Release
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -20,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: grafana/plugin-actions/build-plugin@main
         with:
-          policy_token: "{{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}"
+          policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
         # Uncomment to enable plugin signing
         # (For more info on how to generate the access policy token see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token)
         #with:
