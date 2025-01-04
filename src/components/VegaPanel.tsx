@@ -172,6 +172,7 @@ export const SimplePanel: React.FC<Props> = ({
           height: ${height}px;
         `,
 			)}
+			data-testid="vega-panel"
 		>
 			<SpecChart data={vegaData} />
 		</div>

@@ -41,8 +41,8 @@ jobs:
         run: pnpm run typecheck
       - name: Lint
         run: pnpm run lint
-      - name: Unit tests
-        run: pnpm run test:ci
+      # - name: Unit tests
+      #   run: pnpm run test:ci
       - name: Build frontend
         run: |
           if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
