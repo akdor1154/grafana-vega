@@ -12,6 +12,6 @@
 	},
 	"files": {
 		"include": ["src/**/*", "build.mts"],
-		"ignore": [".config", "dist"]
+		"ignore": [".config", "dist", "playwright", "playwright-report"]
 	}
 }
