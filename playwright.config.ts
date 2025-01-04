@@ -47,6 +47,7 @@ export default defineConfig<PluginOptions>({
 			name: "chromium",
 			use: {
 				...devices["Desktop Chrome"],
+				launchOptions: { args: ["--hide-scrollbar"] },
 				storageState: "playwright/.auth/admin.json",
 			},
 			dependencies: ["auth"],

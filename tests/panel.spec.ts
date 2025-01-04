@@ -22,7 +22,10 @@ test("should display data for provisioned dashboard", async ({
 	});
 	const panelEditPage = await gotoPanelEditPage({ dashboard, id: "1" });
 
-	await expect(panelEditPage.panel.locator).toHaveScreenshot("provisioned.png");
+	await expect(panelEditPage.panel.locator).toHaveScreenshot(
+		"provisioned.png",
+		{ scale: "css" },
+	);
 });
 
 test("should display a graph when a spec is set", async ({
