@@ -2,7 +2,7 @@
 	"$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
 	"type": "panel",
 	"name": "Vega",
-	"id": "gridcogdev-vega-panel",
+	"id": "akdor1154-vega-panel",
 	"buildMode": "%BUILD_MODE%",
 	"info": {
 		"keywords": ["panel"],

@@ -51,7 +51,7 @@
 				}
 			],
 			"title": "Sample Panel Title",
-			"type": "gridcogdev-vega-panel"
+			"type": "akdor1154-vega-panel"
 		},
 		{
 			"datasource": {
@@ -82,7 +82,7 @@
 				}
 			],
 			"title": "Sample Panel Title",
-			"type": "gridcogdev-vega-panel"
+			"type": "akdor1154-vega-panel"
 		}
 	],
 	"refresh": "",

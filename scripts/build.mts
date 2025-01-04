@@ -3,6 +3,7 @@ import Ajv from "ajv";
 import standaloneCode from "ajv/dist/standalone";
 import esbuild from "esbuild";
 import copy from "esbuild-plugin-copy";
+import { umdWrapper } from "esbuild-plugin-umd-wrapper";
 
 import { readFileSync, writeFileSync } from "node:fs";
 import addFormats from "ajv-formats";
@@ -94,7 +95,6 @@ await esbuild.build({
 		"react-router",
 		"react-router-dom",
 		"d3",
-		"angular",
 		"@grafana/ui",
 		"@grafana/runtime",
 		"@grafana/data",
@@ -105,7 +105,7 @@ await esbuild.build({
 		".woff2": "copy",
 	},
 	bundle: true,
-	format: "cjs",
+	format: "umd",
 	minify: true,
 	sourcemap: "linked",
 	sourceRoot:
@@ -141,5 +141,6 @@ await esbuild.build({
 				],
 			],
 		}),
+		umdWrapper({ libraryName: "akdor1154-vega-panel" }),
 	],
 });

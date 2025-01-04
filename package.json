@@ -11,7 +11,7 @@
 		"server": "docker compose up --build",
 		"sign": "npx --yes @grafana/sign-plugin@latest"
 	},
-	"author": "Gridcogdev",
+	"author": "akdor1154",
 	"license": "BSD-3-Clause",
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
