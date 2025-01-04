@@ -5,7 +5,7 @@ import copy from "esbuild-plugin-copy";
 
 import { readFileSync } from "node:fs";
 import addFormats from "ajv-formats";
-import { SOURCE_DIR } from "../.config/webpack/constants.ts";
+import { SOURCE_DIR } from "../.config/webpack/constants.mts";
 
 const DIST_DIR = "dist";
 
