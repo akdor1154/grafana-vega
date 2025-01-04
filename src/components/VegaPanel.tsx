@@ -30,8 +30,9 @@ import React, {
 import type { Options } from "types";
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
-import * as vegaThemes from "vega-themes";
 import * as vegaTooltip from "vega-tooltip";
+
+import dark from "./dark";
 
 interface Props extends PanelProps<Options> {}
 
@@ -157,7 +158,7 @@ export const SimplePanel: React.FC<Props> = ({
 		}
 
 		const config: vega.Config & vegaLite.Config = theme.isDark
-			? (vegaThemes.dark as vega.Config & vegaLite.Config)
+			? (dark as vega.Config & vegaLite.Config)
 			: {};
 		config.background = "transparent";
 		const tooltipConfig: vegaTooltip.Options = {
