@@ -171,6 +171,10 @@ export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
 	}
 	const onNewText = useCallback(_onNewText, []);
 
+	useEffect(() => {
+		onNewText(value.text);
+	});
+
 	return (
 		<div>
 			<CodeEditor

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.8
+ - Ensure provisioning works
+
 ## 1.0.7
  - Make dark theme better
 

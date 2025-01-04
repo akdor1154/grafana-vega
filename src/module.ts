@@ -1,5 +1,6 @@
 import { PanelPlugin } from "@grafana/data";
 import { CodeEditorOption } from "panel/CodeEditor";
+import type { TopLevelSpec } from "vega-lite";
 import { SimplePanel } from "./components/VegaPanel";
 import type { Options } from "./types";
 
@@ -19,7 +20,7 @@ export const plugin = new PanelPlugin<Options>(SimplePanel).setPanelOptions(
 	},
 );
 
-const defaultBar = {
+const defaultBar: TopLevelSpec = {
 	$schema: "https://vega.github.io/schema/vega-lite/v5.json",
 	data: {
 		name: "A",
