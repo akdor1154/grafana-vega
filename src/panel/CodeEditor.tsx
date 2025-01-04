@@ -18,6 +18,7 @@ import vegaLiteSchema from "vega-lite/build/vega-lite-schema.json";
 import vegaLiteSchemaAjv from "vega-lite/build/vega-lite-schema.json" with {
 	type: "ajv",
 };
+import vegaSchema from "vega/build/vega-schema.json";
 
 vegaLiteSchema.definitions.Data;
 const ajvParsers = {
@@ -32,7 +33,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 }) => {
 	// we're going to modify this schema to sub in field names and ds names, so we want it
 	// typed as a generic JSON schema instead of a literal JSON type.
-	const [schema, setSchema] = useState(
+	const [vlSchema, setVLSchema] = useState(
 		vegaLiteSchema as unknown as JSONSchemaType<{ [k: string]: unknown }>,
 	);
 	const [editor, setEditor] = useState<Monaco | null>(null);
@@ -42,7 +43,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		const s = structuredClone(vegaLiteSchema) as unknown as typeof schema;
+		const s = structuredClone(vegaLiteSchema) as unknown as typeof vlSchema;
 
 		// sub in field names and datasource names
 		if (!s.definitions?.FieldName) {
@@ -60,7 +61,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			description: s.definitions?.NamedData.properties.name.description,
 			anyOf: [{ type: "string" }, { type: "string", enum: dataNames }],
 		};
-		setSchema(s);
+		setVLSchema(s);
 	}, [JSON.stringify({ fieldNames, dataNames })]);
 
 	async function editorDidMount(_: unknown, m: Monaco) {
@@ -76,11 +77,16 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 				{
 					uri: "https://vega.github.io/schema/vega-lite/v5.json",
 					fileMatch: ["*.json"],
-					schema: schema,
+					schema: vlSchema,
+				},
+				{
+					uri: "https://vega.github.io/schema/vega/v5.json",
+					fileMatch: ["*.json"],
+					schema: vegaSchema,
 				},
 			],
 		});
-	}, [editor, schema]);
+	}, [editor, vlSchema]);
 
 	return (
 		<GrafanaCodeEditor
@@ -103,6 +109,27 @@ export interface CodeEditorOptionSettings {
 interface CodeEditorOptionProps
 	extends StandardEditorProps<SpecValue, CodeEditorOptionSettings, Options> {}
 
+function tryParseInput(value: string): [object | null, string[]] {
+	// biome-ignore lint/complexity/noBannedTypes: <explanation>
+	let obj: {};
+	try {
+		obj = JSON.parse(value);
+	} catch (e) {
+		return [null, [(e as Error).message]];
+	}
+	if (obj !== null) {
+		const res = ajvParsers.vegaLite(obj);
+		if (!res) {
+			const errors =
+				ajvParsers.vegaLite.errors
+					?.map((e) => e.message)
+					.filter((e): e is string => !!e) ?? [];
+			return [null, errors];
+		}
+	}
+	return [obj, []];
+}
+
 export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
 	value,
 	item,
@@ -111,26 +138,8 @@ export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
 }) => {
 	const [errors, setErrors] = useState<string[]>([]);
 	function _onNewText(value: string) {
-		// biome-ignore lint/complexity/noBannedTypes: <explanation>
-		let obj: {} | null;
-		setErrors([]);
-		try {
-			obj = JSON.parse(value);
-		} catch (e) {
-			obj = null;
-			setErrors([(e as Error).message]);
-		}
-		if (obj !== null) {
-			const res = ajvParsers.vegaLite(obj);
-			if (!res) {
-				obj = null;
-				setErrors(
-					ajvParsers.vegaLite.errors
-						?.map((e) => e.message)
-						.filter((e): e is string => !!e) ?? [],
-				);
-			}
-		}
+		const [obj, errors] = tryParseInput(value);
+		setErrors(errors);
 		// as before - grafana does funny business if we send back raw obj here.
 		const parsedSpec = obj ? JSON.stringify(obj) : null;
 		onChange({ text: value, parsedSpec: parsedSpec });
