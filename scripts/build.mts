@@ -1,11 +1,11 @@
+import { execFileSync } from "node:child_process";
 import Ajv from "ajv";
 import standaloneCode from "ajv/dist/standalone";
 import esbuild from "esbuild";
 import copy from "esbuild-plugin-copy";
-import { execFileSync } from "node:child_process";
 
-import addFormats from "ajv-formats";
 import { readFileSync, writeFileSync } from "node:fs";
+import addFormats from "ajv-formats";
 import { SOURCE_DIR } from "../.config/webpack/constants.mts";
 
 const DIST_DIR = "dist";
@@ -69,8 +69,10 @@ function copyReplacePlugin(args: CopyReplacePluginArgs): esbuild.Plugin {
 }
 
 const now = new Date();
-const commit = execFileSync("git", ["rev-parse", "HEAD"], {"encoding": "utf-8"}).trim()
-console.dir({commit})
+const commit = execFileSync("git", ["rev-parse", "HEAD"], {
+	encoding: "utf-8",
+}).trim();
+console.dir({ commit });
 await esbuild.build({
 	sourceRoot: SOURCE_DIR,
 	entryPoints: ["module.js"],
@@ -125,7 +127,7 @@ await esbuild.build({
 				[/%TODAY%/g, now.toISOString().substring(0, 10)],
 				[/%PLUGIN_ID%/g, pluginJson.id],
 				[/%COMMIT%/g, commit],
-				[/"%TIMESTAMP%"/g, (now.getTime()/1000).toFixed(0)]
+				[/"%TIMESTAMP%"/g, (now.getTime() / 1000).toFixed(0)],
 			],
 		}),
 	],
