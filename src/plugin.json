@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+	"type": "panel",
+	"name": "Vega",
+	"id": "gridcogdev-vega-panel",
+	"info": {
+		"keywords": ["panel"],
+		"description": "",
+		"author": {
+			"name": "Jarrad Whitaker <akdor1154>"
+		},
+		"logos": {
+			"small": "img/logo.svg",
+			"large": "img/logo.svg"
+		},
+		"links": [],
+		"screenshots": [
+			{"path": "img/docs/screenshot.webp"},
+			{"path": "img/docs/fields.webp"}
+		],
+		"version": "%VERSION%",
+		"updated": "%TODAY%"
+	},
+	"dependencies": {
+		"grafanaDependency": ">=10.4.0",
+		"plugins": []
+	}
+}

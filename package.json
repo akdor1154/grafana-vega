@@ -1,0 +1,52 @@
+{
+	"name": "grafana-vega",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "tsx scripts/build.mts",
+		"dev": "tsx scripts/build.mts",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"lint:fix": "biome check --fix",
+		"e2e": "playwright test",
+		"server": "docker compose up --build",
+		"sign": "npx --yes @grafana/sign-plugin@latest"
+	},
+	"author": "Gridcogdev",
+	"license": "BSD-3-Clause",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@grafana/plugin-e2e": "^1.13.1",
+		"@grafana/tsconfig": "^2.0.0",
+		"@playwright/test": "^1.41.2",
+		"@types/node": "^20.8.7",
+		"@types/react": "^19.0.2",
+		"copy-webpack-plugin": "^11.0.0",
+		"esbuild": "^0.24.2",
+		"esbuild-plugin-copy": "^2.1.1",
+		"esbuild-plugin-umd-wrapper": "^3.0.0",
+		"tsx": "^4.19.2",
+		"typescript": "5.5.4"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"dependencies": {
+		"@emotion/css": "11.10.6",
+		"@grafana/data": "^11.3.2",
+		"@grafana/runtime": "^11.3.2",
+		"@grafana/schema": "^11.3.2",
+		"@grafana/ui": "^11.3.2",
+		"@uwdata/flechette": "^1.1.1",
+		"ajv": "^8.17.1",
+		"ajv-formats": "^3.0.1",
+		"monaco-editor": "0.34.1",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"vega": "^5.30.0",
+		"vega-lite": "^5.23.0",
+		"vega-loader-arrow": "^0.3.1",
+		"vega-themes": "^2.15.0",
+		"vega-tooltip": "^0.35.2"
+	},
+	"packageManager": "pnpm@9.12.3"
+}
