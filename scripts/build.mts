@@ -56,8 +56,7 @@ function copyReplacePlugin(args: CopyReplacePluginArgs): esbuild.Plugin {
 	return {
 		name: "replaceInPluginJson",
 		setup(build) {
-			build.onStart(() => {
-				console.log("yo");
+			build.onEnd(() => {
 				let source = readFileSync(args.from, "utf-8");
 				for (const [pat, repl] of args.patterns) {
 					source = source.replaceAll(pat, repl);
