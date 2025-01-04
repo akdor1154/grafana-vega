@@ -43,11 +43,7 @@ jobs:
       #   run: pnpm run test:ci
       - name: Build frontend
         run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            pnpm run build --profile --json stats.json
-          else
-            pnpm run build
-          fi
+          pnpm run build
 
       - name: Check for backend
         id: check-for-backend
