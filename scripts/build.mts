@@ -3,8 +3,8 @@ import standaloneCode from "ajv/dist/standalone";
 import esbuild from "esbuild";
 import copy from "esbuild-plugin-copy";
 
-import addFormats from "ajv-formats";
 import { readFileSync } from "node:fs";
+import addFormats from "ajv-formats";
 import { SOURCE_DIR } from "../.config/webpack/constants";
 
 const DIST_DIR = "dist";
