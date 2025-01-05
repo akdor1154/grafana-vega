@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.9
+ - Fix endless rerender loop when editing
+
 ## 1.0.8
  - Ensure provisioning works
 
