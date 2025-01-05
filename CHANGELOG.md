@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.10
+ - Fix rich text in schema autocomplete
+
 ## 1.0.9
  - Fix endless rerender loop when editing
 

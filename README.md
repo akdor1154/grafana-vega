@@ -29,3 +29,11 @@ Vega or Vega-Lite specs.
  - Dig into if it's possible to cope when Grafana sends us multiple dataframes with the same name/refId
 
  - Get it signed
+
+## Acknowledgements
+
+ - The Vega project, you guys rock.
+
+ - Sam Schick's prior art doing the same thing, https://github.com/schicks/vega-grafana
+
+ - Gapit's generic HTML plugin, https://grafana.com/grafana/plugins/gapit-htmlgraphics-panel/ ,  which I used as a reference to get the nice editor working, and additionally for letting Vega panels be used in a pinch before I wrote this!
