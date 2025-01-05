@@ -171,9 +171,10 @@ export const CodeEditorOption: React.FC<CodeEditorOptionProps> = ({
 	}
 	const onNewText = useCallback(_onNewText, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		onNewText(value.text);
-	});
+	}, []);
 
 	return (
 		<div>
