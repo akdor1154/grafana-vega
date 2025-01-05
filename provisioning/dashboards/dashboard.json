@@ -37,7 +37,7 @@
 			"options": {
 				"vegaSpec": {
 					"text": "{\n  \"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\",\n  \"data\": {\n    \"name\": \"A\"\n  },\n  \"mark\": {\n    \"type\": \"circle\",\n    \"tooltip\": {\n      \"content\": \"data\"\n    }\n  },\n  \"width\": \"container\",\n  \"height\": \"container\",\n  \"encoding\": {\n    \"x\": {\n      \"field\": \"Time\",\n      \"type\": \"temporal\"\n    },\n    \"y\": {\n      \"field\": \"Value\",\n      \"type\": \"quantitative\"\n    },\n    \"color\": {\n      \"field\": \"Label\",\n      \"type\": \"nominal\"\n    }\n  }\n}",
-					"spec": {
+					"parsedSpec": {
 						"text": "{\"$schema\":\"https://vega.github.io/schema/vega-lite/v5.json\",\"data\":{\"name\":\"A\"},\"mark\":{\"type\":\"circle\",\"tooltip\":{\"content\":\"data\"}},\"width\":\"container\",\"height\":\"container\",\"encoding\":{\"x\":{\"field\":\"Time\",\"type\":\"temporal\"},\"y\":{\"field\":\"Value\",\"type\":\"quantitative\"},\"color\":{\"field\":\"Label\",\"type\":\"nominal\"}}}",
 						"mode": "vega-lite"
 					}
