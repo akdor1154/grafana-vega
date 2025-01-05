@@ -29,6 +29,20 @@ const ajvParsers = {
 	vega: vegaSchemaAjv as unknown as ValidateFunction<unknown>,
 } satisfies Record<string, ValidateFunction>;
 
+export default function addMarkdownProps<T>(
+	s: JSONSchemaType<{ [k: string]: unknown }>,
+): void {
+	if (s.description) {
+		s.markdownDescription = s.description;
+	}
+	for (const key of Reflect.ownKeys(s)) {
+		const subval = s[key as string];
+		if (typeof subval === "object" && subval !== null) {
+			addMarkdownProps(subval);
+		}
+	}
+}
+
 export const CodeEditor: FC<CodeEditorProps> = ({
 	settings,
 	value,
@@ -37,9 +51,13 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 }) => {
 	// we're going to modify this schema to sub in field names and ds names, so we want it
 	// typed as a generic JSON schema instead of a literal JSON type.
-	const [vlSchema, setVLSchema] = useState(
-		vegaLiteSchema as unknown as JSONSchemaType<{ [k: string]: unknown }>,
-	);
+	const [vlSchema, setVLSchema] = useState<JSONSchemaType<{
+		[k: string]: unknown;
+	}> | null>(null);
+	const [vgSchema, setVGSchema] = useState<JSONSchemaType<{
+		[k: string]: unknown;
+	}> | null>(null);
+
 	const [editor, setEditor] = useState<Monaco | null>(null);
 
 	const fieldNames = context.data.flatMap((df) => df.fields).map((f) => f.name);
@@ -47,7 +65,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		const s = structuredClone(vegaLiteSchema) as unknown as typeof vlSchema;
+		const s = structuredClone(vegaLiteSchema) as unknown as Exclude<
+			typeof vlSchema,
+			null
+		>;
+
+		addMarkdownProps(s);
 
 		// sub in field names and datasource names
 		if (!s.definitions?.FieldName) {
@@ -68,12 +91,21 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		setVLSchema(s);
 	}, [JSON.stringify({ fieldNames, dataNames })]);
 
+	useEffect(() => {
+		const s = structuredClone(vegaSchema) as unknown as Exclude<
+			typeof vgSchema,
+			null
+		>;
+		addMarkdownProps(s);
+		setVGSchema(s);
+	}, []);
+
 	async function editorDidMount(_: unknown, m: Monaco) {
 		setEditor(m);
 	}
 
 	useEffect(() => {
-		if (!editor) {
+		if (!editor || !vgSchema || !vlSchema) {
 			return;
 		}
 		editor.languages.json.jsonDefaults.setDiagnosticsOptions({
@@ -86,11 +118,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 				{
 					uri: "https://vega.github.io/schema/vega/v5.json",
 					fileMatch: ["*.json"],
-					schema: vegaSchema,
+					schema: vgSchema,
 				},
 			],
 		});
-	}, [editor, vlSchema]);
+	}, [editor, vlSchema, vgSchema]);
 
 	return (
 		<GrafanaCodeEditor
