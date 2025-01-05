@@ -15,14 +15,21 @@ test("should display data for provisioned dashboard", async ({
 	gotoPanelEditPage,
 	readProvisionedDashboard,
 	readProvisionedDataSource,
+	page,
 }) => {
 	const ds = await readProvisionedDataSource({ fileName: "datasources.yml" });
 	const dashboard = await readProvisionedDashboard({
 		fileName: "dashboard.json",
 	});
 	const panelEditPage = await gotoPanelEditPage({ dashboard, id: "1" });
-
-	await expect(panelEditPage.panel.locator).toHaveScreenshot("provisioned.png");
+	await page.getByTestId("vega-panel").evaluate(async (el) => {
+		// hack around differences in dimensions in different grafana versions
+		el.setAttribute("style", "width: 600px; height: 200px;");
+		await new Promise(window.requestAnimationFrame);
+	});
+	await expect(page.getByTestId("vega-panel")).toHaveScreenshot(
+		"provisioned.png",
+	);
 });
 
 test("should display a graph when a spec is set", async ({

@@ -1,4 +1,4 @@
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import {
 	type DataFrame,
 	type Field,
@@ -174,16 +174,7 @@ export const SimplePanel: React.FC<Props> = ({
 	]);
 
 	return (
-		<div
-			className={cx(
-				styles.wrapper,
-				css`
-          width: ${width}px;
-          height: ${height}px;
-        `,
-			)}
-			data-testid="vega-panel"
-		>
+		<div style={{ width: "100%", height: "100%" }} data-testid="vega-panel">
 			<SpecChart data={vegaData} />
 		</div>
 	);
