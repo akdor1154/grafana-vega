@@ -174,7 +174,15 @@ export const SimplePanel: React.FC<Props> = ({
 	]);
 
 	return (
-		<div style={{ width: "100%", height: "100%" }} data-testid="vega-panel">
+		<div
+			style={{
+				width: "100%",
+				height: "100%",
+				overflow: "auto",
+				paddingBottom: "inherit",
+			}}
+			data-testid="vega-panel"
+		>
 			<SpecChart data={vegaData} />
 		</div>
 	);
