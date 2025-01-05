@@ -19,14 +19,7 @@ import {
 	utf8,
 } from "@uwdata/flechette";
 // biome-ignore lint/style/useImportType: <explanation>
-import React, {
-	FC,
-	useCallback,
-	useEffect,
-	useLayoutEffect,
-	useMemo,
-	useRef,
-} from "react";
+import React, { FC, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import type { Options } from "types";
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
@@ -85,7 +78,7 @@ function arrowFieldType(f: Field): DataType | undefined {
 	}
 }
 
-function _toArrow(data: DataFrame) {
+function toArrow(data: DataFrame) {
 	const df = tableFromArrays(
 		Object.fromEntries(data.fields.map((f) => [f.name, f.values])),
 		{
@@ -121,7 +114,6 @@ export const SimplePanel: React.FC<Props> = ({
 		);
 	}
 
-	const toArrow = useCallback(_toArrow, []);
 	const vegaData = useMemo(() => {
 		const counts: Record<string, number> = {};
 		for (const s of data.series) {
@@ -139,7 +131,7 @@ export const SimplePanel: React.FC<Props> = ({
 			);
 		}
 		return Object.fromEntries(data.series.map((s) => [s.refId, toArrow(s)]));
-	}, [data.series, toArrow]);
+	}, [data.series]);
 	const datasetNames = data.series
 		.map((s) => s.name ?? s.refId)
 		.filter((s): s is string => !!s);
