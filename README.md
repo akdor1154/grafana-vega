@@ -3,20 +3,20 @@
 This is a panel plugin for Grafana that allows you to configure
 Vega or Vega-Lite specs.
 
-<img src="src/img/docs/screenshot.webp" alt="A screenshot of the grafana-vega plugin in action" />
+<img src="src/static-root/img/docs/screenshot.webp" alt="A screenshot of the grafana-vega plugin in action" />
 
 ## Features
  - The ability to write Vega/Vega Lite specs, which are much
    more powerful than the inbuilt Grafana vizes. ([Gallery](https://vega.github.io/vega-lite/examples/)). <3 Vega.
 
  - A JSON editor with the Vega specs hooked up to it for autocomplete
-   ![Autocomplete in action](src/img/docs/autocomplete.webp)
+   ![Autocomplete in action](src/static-root/img/docs/autocomplete.webp)
 
  - Field names and Datasource names also hooked up to autocomplete
-   ![Autocompleting fields in action](src/img/docs/fields.webp)
+   ![Autocompleting fields in action](src/static-root/img/docs/fields.webp)
 
  - Automatic light/dark mode as per your Grafana theme
-   ![Light mode](src/img/docs/light.webp)
+   ![Light mode](src/static-root/img/docs/light.webp)
 
  - An obsessive amount of mucking about with React to stop your spec being reparsed all the time
 

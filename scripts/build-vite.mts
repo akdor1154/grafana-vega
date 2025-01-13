@@ -77,8 +77,8 @@ function buildConfig(opts: ConfigEnv): UserConfig {
 				to: "README.md",
 				patterns: [
 					[
-						/src\/img\//g,
-						"https://raw.githubusercontent.com/akdor1154/grafana-vega/refs/heads/main/src/img/",
+						/src\/static-root\/img\//g,
+						"https://raw.githubusercontent.com/akdor1154/grafana-vega/refs/heads/main/src/static-root/img/",
 					],
 				],
 			}),
