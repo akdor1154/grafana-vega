@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.11
+ - Switch bundler to Vite for AMD support
+
 ## 1.0.10
  - Fix rich text in schema autocomplete
 
