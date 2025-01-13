@@ -7,11 +7,9 @@ import type { FC } from "react";
 import React, { useCallback, useEffect, useState } from "react";
 import type { Options, SPEC_MODE, SpecValue } from "types";
 import vegaLiteSchema from "vega-lite/build/vega-lite-schema.json";
-import vegaLiteSchemaAjv from "vega-lite/build/vega-lite-schema.json" with {
-	type: "ajv",
-};
+import vegaLiteSchemaAjv from "vega-lite/build/vega-lite-schema.json?ajv";
 import vegaSchema from "vega/build/vega-schema.json";
-import vegaSchemaAjv from "vega/build/vega-schema.json" with { type: "ajv" };
+import vegaSchemaAjv from "vega/build/vega-schema.json?ajv";
 
 interface CodeEditorProps {
 	settings?: CodeEditorOptionSettings;
@@ -23,10 +21,9 @@ interface CodeEditorProps {
 const VEGA_LITE_SCHEMA_ID = "https://vega.github.io/schema/vega-lite/v5.json";
 const VEGA_SCHEMA_ID = "https://vega.github.io/schema/vega/v5.json";
 
-vegaLiteSchema.definitions.Data;
 const ajvParsers = {
-	vegaLite: vegaLiteSchemaAjv as unknown as ValidateFunction<unknown>,
-	vega: vegaSchemaAjv as unknown as ValidateFunction<unknown>,
+	vegaLite: vegaLiteSchemaAjv,
+	vega: vegaSchemaAjv,
 } satisfies Record<string, ValidateFunction>;
 
 export default function addMarkdownProps<T>(

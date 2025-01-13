@@ -2,8 +2,8 @@
 	"name": "grafana-vega",
 	"version": "1.0.10",
 	"scripts": {
-		"build": "tsx scripts/build.mts",
-		"dev": "tsx scripts/build.mts",
+		"build": "vite build --config scripts/build-vite.mts",
+		"dev": "vite build --config scripts/build-vite.mts",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check",
 		"lint:fix": "biome check --fix",
@@ -21,11 +21,11 @@
 		"@types/node": "^20.8.7",
 		"@types/react": "^19.0.2",
 		"copy-webpack-plugin": "^11.0.0",
-		"esbuild": "^0.24.2",
 		"esbuild-plugin-copy": "^2.1.1",
 		"esbuild-plugin-umd-wrapper": "^3.0.0",
 		"tsx": "^4.19.2",
-		"typescript": "5.5.4"
+		"typescript": "5.5.4",
+		"vite": "^6.0.7"
 	},
 	"engines": {
 		"node": ">=22"

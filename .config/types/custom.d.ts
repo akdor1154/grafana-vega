@@ -35,3 +35,9 @@ declare module '*.woff2';
 declare module '*.eot';
 declare module '*.ttf';
 declare module '*.otf';
+
+declare module '*.json?ajv' {
+  import type { ValidateFunction } from "ajv";
+  const validator: ValidateFunction<unknown>;
+  export default validator;
+}

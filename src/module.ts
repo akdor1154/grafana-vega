@@ -1,7 +1,7 @@
 import { PanelPlugin } from "@grafana/data";
-import { CodeEditorOption } from "panel/CodeEditor";
 import type { TopLevelSpec } from "vega-lite";
 import { SimplePanel } from "./components/VegaPanel";
+import { CodeEditorOption } from "./panel/CodeEditor";
 import type { Options } from "./types";
 
 export const plugin = new PanelPlugin<Options>(SimplePanel).setPanelOptions(
