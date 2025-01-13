@@ -1,6 +1,6 @@
 {
 	"name": "grafana-vega",
-	"version": "1.0.10",
+	"version": "1.0.11",
 	"scripts": {
 		"build": "vite build --config scripts/build-vite.mts",
 		"dev": "vite build --config scripts/build-vite.mts",
