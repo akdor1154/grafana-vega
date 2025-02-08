@@ -142,17 +142,19 @@ interface CodeEditorOptionProps
 
 import * as jsonc from "jsonc-parser";
 
+export const JSONC_PARSE_OPTS = {
+	disallowComments: false,
+	allowTrailingComma: true,
+	allowEmptyContent: true,
+};
+
 function tryParseInput(
 	value: string,
 ): [{ obj: object; mode: SPEC_MODE } | null, string[]] {
 	let obj: { [k: string]: unknown };
 	const errs: jsonc.ParseError[] = [];
 	try {
-		obj = jsonc.parse(value, errs, {
-			disallowComments: false,
-			allowTrailingComma: true,
-			allowEmptyContent: true,
-		});
+		obj = jsonc.parse(value, errs, JSONC_PARSE_OPTS);
 	} catch (e) {
 		return [null, [(e as Error).message]];
 	}
