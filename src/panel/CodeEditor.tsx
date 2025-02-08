@@ -105,7 +105,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		if (!editor || !vgSchema || !vlSchema) {
 			return;
 		}
+
 		editor.languages.json.jsonDefaults.setDiagnosticsOptions({
+			allowComments: true,
+			trailingCommas: "ignore",
+			enableSchemaRequest: false,
 			schemas: [
 				{
 					uri: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -130,7 +134,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			onEditorDidMount={editorDidMount}
 			onSave={onChange}
 			onBlur={onChange}
-			monacoOptions={{ contextmenu: true }}
+			monacoOptions={{ contextmenu: true, formatOnPaste: true }}
 		/>
 	);
 };
@@ -142,14 +146,24 @@ export interface CodeEditorOptionSettings {
 interface CodeEditorOptionProps
 	extends StandardEditorProps<SpecValue, CodeEditorOptionSettings, Options> {}
 
+import * as jsonc from "jsonc-parser";
+
 function tryParseInput(
 	value: string,
 ): [{ obj: object; mode: SPEC_MODE } | null, string[]] {
 	let obj: { [k: string]: unknown };
+	const errs: jsonc.ParseError[] = [];
 	try {
-		obj = JSON.parse(value);
+		obj = jsonc.parse(value, errs, {
+			disallowComments: false,
+			allowTrailingComma: true,
+			allowEmptyContent: true,
+		});
 	} catch (e) {
 		return [null, [(e as Error).message]];
+	}
+	if (errs.length > 0) {
+		return [null, errs.map((e) => jsonc.printParseErrorCode(e.error))];
 	}
 
 	let validator: ValidateFunction<unknown>;
@@ -157,10 +171,10 @@ function tryParseInput(
 
 	const schema = obj.$schema;
 	if (schema === VEGA_LITE_SCHEMA_ID) {
-		validator = ajvParsers.vegaLite;
+		validator = parsers.vegaLite;
 		mode = "vega-lite";
 	} else if (schema === VEGA_SCHEMA_ID) {
-		validator = ajvParsers.vega;
+		validator = parsers.vega;
 		mode = "vega";
 	} else {
 		return [

@@ -1,12 +1,8 @@
 import type { ConfigEnv, PluginOption, UserConfig } from "vite";
 import { defineConfig } from "vite";
 
-import Ajv from "ajv";
-import addFormats from "ajv-formats";
-import standaloneCode from "ajv/dist/standalone";
 import { execFileSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
-import { basename } from "node:path";
 import packageJson from "../package.json" with { type: "json" };
 import pluginJson from "../src/plugin.json" with { type: "json" };
 
