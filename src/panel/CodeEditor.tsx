@@ -128,7 +128,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			onEditorDidMount={editorDidMount}
 			onSave={onChange}
 			onBlur={onChange}
-			monacoOptions={{ contextmenu: true, formatOnPaste: true }}
+			monacoOptions={{
+				contextmenu: true,
+				formatOnPaste: true,
+				minimap: { enabled: false },
+			}}
 		/>
 	);
 };
