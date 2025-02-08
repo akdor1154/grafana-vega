@@ -24,7 +24,10 @@ function buildConfig(opts: ConfigEnv): UserConfig {
 			sourcemap: true,
 			lib: {
 				name: pluginJson.id,
-				entry: `${SOURCE_DIR}/module.ts`,
+				entry: [
+					`${SOURCE_DIR}/module.ts`,
+					`${SOURCE_DIR}/codegen/validator.mjs`,
+				],
 				fileName: (format, name) => `${name}.js`,
 				formats: ["amd"],
 			},
@@ -78,7 +81,6 @@ function buildConfig(opts: ConfigEnv): UserConfig {
 					],
 				],
 			}),
-			ajvCompilerPlugin(),
 		],
 	};
 }
@@ -105,63 +107,4 @@ function copyReplacePlugin(args: CopyReplacePluginArgs): PluginOption {
 	};
 }
 
-function ajvCompilerPlugin(): PluginOption {
-	const ajv = new Ajv({
-		code: {
-			source: true,
-			esm: true,
-			// formats: _`formats")`,
-		},
-		strictTypes: false,
-		allowUnionTypes: true,
-		formats: { "color-hex": true },
-	});
-	addFormats(ajv);
-	async function buildValidator(path: string) {
-		const s = await readFile(path, { encoding: "utf-8" });
-		const obj = JSON.parse(s);
-		const validator = ajv.compile(obj);
-		let moduleSource = standaloneCode(ajv, validator);
-		const requires = /require\((.+?)\)/g;
-		const imports: { [k: string]: string } = {};
-		let i = 0;
-		moduleSource = moduleSource.replaceAll(requires, (match, impPath) => {
-			if (!(impPath in imports)) {
-				const name = `jw_imp${i++}`;
-				imports[impPath] = name;
-			}
-			return imports[impPath];
-		});
-		const importString = Object.entries(imports)
-			.map(([path, name]) => `import * as ${name} from ${path};`)
-			.join("\n");
-		moduleSource = '"use strict"\n' + importString + moduleSource;
-		await writeFile(basename(path) + ".mjs", moduleSource);
-		return moduleSource;
-	}
-	const prefix = "\0AJVCOMP:";
-	return {
-		name: "ajvCompile",
-		enforce: "pre",
-		async resolveId(source, importer, options) {
-			if (source.endsWith("json?ajv")) {
-				const resolution = await this.resolve(source, importer, options);
-				if (!resolution || resolution.external) return resolution;
-				const id = resolution.id;
-				return `${prefix}${id.slice(0, id.length - 4)}.ajv.mjs`;
-			}
-		},
-		async load(id) {
-			if (id.startsWith(prefix)) {
-				const info = this.getModuleInfo(id);
-				let path = id.split(":", 2)[1];
-				path = path.slice(0, path.length - 8);
-
-				const code = await buildValidator(path);
-				return code;
-			}
-			return null;
-		},
-	};
-}
 export default defineConfig(buildConfig);
