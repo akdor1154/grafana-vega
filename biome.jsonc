@@ -11,7 +11,13 @@
 		"enabled": true
 	},
 	"files": {
-		"include": ["src/**/*", "build.mts"],
-		"ignore": [".config", "dist", "playwright", "playwright-report"]
+		"include": ["src/**/*", "scripts/**/*"],
+		"ignore": [
+			".config",
+			"dist",
+			"playwright",
+			"playwright-report",
+			"src/codegen"
+		]
 	}
 }
