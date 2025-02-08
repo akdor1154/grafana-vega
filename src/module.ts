@@ -5,14 +5,18 @@ import { CodeEditorOption, JSONC_PARSE_OPTS } from "./panel/CodeEditor";
 import type { Options } from "./types";
 
 import * as jsonc from "jsonc-parser";
+import React from "react";
+import { description } from "./panel/description";
 
 export const plugin = new PanelPlugin<Options>(SimplePanel).setPanelOptions(
 	(builder) => {
 		return builder.addCustomEditor({
 			id: "spec",
 			path: "vegaSpec",
-			name: "Vega Spec",
+			name: "Specification",
 			editor: CodeEditorOption,
+			// @ts-ignore - hey grafana guys, I just want to include a link here.. any sanctioned way to do so?
+			description: description as string,
 			defaultValue: {
 				parsedSpec: {
 					text: jsonc.parse(defaultBarText, [], JSONC_PARSE_OPTS),
