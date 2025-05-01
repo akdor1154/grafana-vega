@@ -11,7 +11,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import path from 'path';
 import ReplaceInFileWebpackPlugin from 'replace-in-file-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-import { SubresourceIntegrityPlugin } from 'webpack-subresource-integrity';
+import { SubresourceIntegrityPlugin } from "webpack-subresource-integrity";
 import { type Configuration, BannerPlugin } from 'webpack';
 import LiveReloadPlugin from 'webpack-livereload-plugin';
 import VirtualModulesPlugin from 'webpack-virtual-modules';
@@ -34,7 +34,11 @@ __webpack_public_path__ =
 `,
 });
 
-const config = async (env): Promise<Configuration> => {
+export type Env = {
+  [key: string]: true | string | Env;
+};
+
+const config = async (env: Env): Promise<Configuration> => {
   const baseConfig: Configuration = {
     cache: {
       type: 'filesystem',
@@ -71,17 +75,17 @@ const config = async (env): Promise<Configuration> => {
       'react-router-dom',
       'd3',
       'angular',
-      '@grafana/ui',
-      '@grafana/runtime',
-      '@grafana/data',
+      /^@grafana\/ui/i,
+      /^@grafana\/runtime/i,
+      /^@grafana\/data/i,
 
       // Mark legacy SDK imports as external if their name starts with the "grafana/" prefix
       ({ request }, callback) => {
         const prefix = 'grafana/';
-        const hasPrefix = (request) => request.indexOf(prefix) === 0;
-        const stripPrefix = (request) => request.substr(prefix.length);
+        const hasPrefix = (request: string) => request.indexOf(prefix) === 0;
+        const stripPrefix = (request: string) => request.substr(prefix.length);
 
-        if (hasPrefix(request)) {
+        if (request && hasPrefix(request)) {
           return callback(undefined, stripPrefix(request));
         }
 
@@ -164,8 +168,8 @@ const config = async (env): Promise<Configuration> => {
               comments: (_, { type, value }) => type === 'comment2' && value.trim().startsWith('[create-plugin]'),
             },
             compress: {
-              drop_console: ['log', 'info'],
-            },
+              drop_console: ['log', 'info']
+            }
           },
         }),
       ],
@@ -191,7 +195,7 @@ const config = async (env): Promise<Configuration> => {
       virtualPublicPath,
       // Insert create plugin version information into the bundle
       new BannerPlugin({
-        banner: '/* [create-plugin] version: ' + cpVersion + ' */',
+        banner: "/* [create-plugin] version: " + cpVersion + " */",
         raw: true,
         entryOnly: true,
       }),
@@ -235,24 +239,22 @@ const config = async (env): Promise<Configuration> => {
         },
       ]),
       new SubresourceIntegrityPlugin({
-        hashFuncNames: ['sha256'],
+        hashFuncNames: ["sha256"],
       }),
-      ...(env.development
-        ? [
-            new LiveReloadPlugin(),
-            new ForkTsCheckerWebpackPlugin({
-              async: Boolean(env.development),
-              issue: {
-                include: [{ file: '**/*.{ts,tsx}' }],
-              },
-              typescript: { configFile: path.join(process.cwd(), 'tsconfig.json') },
-            }),
-            new ESLintPlugin({
-              extensions: ['.ts', '.tsx'],
-              lintDirtyModulesOnly: Boolean(env.development), // don't lint on start, only lint changed files
-            }),
-          ]
-        : []),
+      ...(env.development ? [
+        new LiveReloadPlugin(),
+        new ForkTsCheckerWebpackPlugin({
+          async: Boolean(env.development),
+          issue: {
+            include: [{ file: '**/*.{ts,tsx}' }],
+          },
+          typescript: { configFile: path.join(process.cwd(), 'tsconfig.json') },
+        }),
+        new ESLintPlugin({
+          extensions: ['.ts', '.tsx'],
+          lintDirtyModulesOnly: Boolean(env.development), // don't lint on start, only lint changed files
+        }),
+      ] : []),
     ],
 
     resolve: {
