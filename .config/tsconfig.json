@@ -11,10 +11,8 @@
     "rootDir": "../src",
     "baseUrl": "../src",
     "typeRoots": ["../node_modules/@types"],
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler"
+    "resolveJsonModule": true
   },
-
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs",
